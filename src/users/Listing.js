@@ -4,6 +4,7 @@ import Pagination from "../components/Pagination";
 import { API_URL } from "../config";
 import "react-toastify/dist/ReactToastify.css";
 import { showError, showSuccess } from "../utils/toast";
+import Swal from "sweetalert2";
 
 const Listing = () => {
   const [users, setUsers] = useState([]);
@@ -42,18 +43,61 @@ const Listing = () => {
     }
   };
 
-  const handleDelete = async (id) => {
-    if (window.confirm("Are you sure you want to delete this user?")) {
-      try {
-        await fetch(`${API_URL}users/${id}`, { method: "DELETE" });
-        showSuccess("User deleted successfully!");
-        fetchUsers(page);
-      } catch (err) {
-        console.error("Failed to delete user:", err);
-        showError("Failed to delete user.");
-      }
+const handleDelete = async (id) => {
+  const confirm = await Swal.fire({
+    title: "Are you sure?",
+    text: "This action cannot be undone.",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#d33",
+    cancelButtonColor: "#6c757d",
+    confirmButtonText: "Yes, delete it!",
+  });
+
+  if (confirm.isConfirmed) {
+    try {
+      const res = await fetch(`${API_URL}users/${id}`, { method: "DELETE" });
+      if (!res.ok) throw new Error("Failed to delete user");
+
+      await showSuccess("Deleted!", "User has been deleted successfully.");
+      fetchUsers(page);
+    } catch (err) {
+      await showError("Error!", err.message || "Failed to delete user.");
     }
-  };
+  }
+};
+
+
+
+  // const handleDelete = async (id) => {
+  //   if (window.confirm("Are you sure you want to delete this user?")) {
+  //     try {
+  //       await fetch(`${API_URL}users/${id}`, { method: "DELETE" });
+  //       // showSuccess("User deleted successfully!");
+  //       // ✅ Success Alert
+  //     await Swal.fire({
+  //       title: "User Created!",
+  //       text: "The user has been deleted successfully.",
+  //       icon: "success",
+  //       confirmButtonText: "OK",
+  //       confirmButtonColor: "#198754",
+  //     });
+      
+  //       fetchUsers(page);
+  //     } catch (err) {
+  //       console.error("Failed to delete user:", err);
+  //       // showError("Failed to delete user.");
+  //       // ❌ Error Alert
+  //       Swal.fire({
+  //         title: "Error!",
+  //         text: err.message || "Failed to create user.",
+  //         icon: "error",
+  //         confirmButtonText: "Try Again",
+  //         confirmButtonColor: "#d33",
+  //       });
+  //     }
+  //   }
+  // };
 
   return (
     <div>
