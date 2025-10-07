@@ -6,6 +6,7 @@ import Navbar from "../components/Navbar";
 import Topbar from "../components/Topbar";
 import Footer from "../components/Footer";
 import { Outlet } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
 
 const AdminLayout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -29,6 +30,7 @@ const AdminLayout = () => {
         </div>
         <Footer />
       </div>
+      <ToastContainer position="top-right" autoClose={3000} hideProgressBar />
     </div>
   );
 };

@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { API_URL } from "../config";
+import "react-toastify/dist/ReactToastify.css";
+import { showError, showSuccess } from "../utils/toast";
 
 export default function AddUser() {
   const navigate = useNavigate();
@@ -74,10 +76,8 @@ export default function AddUser() {
         throw new Error(data.message || "Failed to create user");
       }
 
-      alert(`✅ User "${formData.name}" created successfully!`);
-      console.log("🟢 API Response:", data);
-       // Redirect to users list
-    navigate("/users");
+        showSuccess("User created successfully");
+        navigate("/users");
 
       // Reset form
       setFormData({
@@ -89,7 +89,8 @@ export default function AddUser() {
       setErrors({});
     } catch (err) {
       console.error("❌ Error:", err);
-      alert("Error: " + err.message);
+      showError("Failed to delete user.");
+      // alert("Error: " + err.message);
     } finally {
       setLoading(false);
     }

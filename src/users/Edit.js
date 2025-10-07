@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { NavLink, useParams, useNavigate } from "react-router-dom";
 import { API_URL } from "../config";
+import { showError, showSuccess } from "../utils/toast";
 
 export default function EditUser() {
   const { id } = useParams();
@@ -73,11 +74,12 @@ export default function EditUser() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || "Failed to update user");
 
-      alert(`✅ User "${formData.name}" updated successfully!`);
+      showSuccess("User updated successfully");
       navigate("/users"); // redirect after success
     } catch (err) {
       console.error(err);
-      alert("Error: " + err.message);
+      // alert("Error: " + err.message);
+      showError("Failed to delete user.");
     } finally {
       setLoading(false);
     }

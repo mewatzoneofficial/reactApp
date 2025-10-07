@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import { Link, NavLink } from "react-router-dom";
 import Pagination from "../components/Pagination";
 import { API_URL } from "../config";
+import "react-toastify/dist/ReactToastify.css";
+import { showError, showSuccess } from "../utils/toast";
 
 const Listing = () => {
   const [users, setUsers] = useState([]);
@@ -44,9 +46,11 @@ const Listing = () => {
     if (window.confirm("Are you sure you want to delete this user?")) {
       try {
         await fetch(`${API_URL}users/${id}`, { method: "DELETE" });
+        showSuccess("User deleted successfully!");
         fetchUsers(page);
       } catch (err) {
         console.error("Failed to delete user:", err);
+        showError("Failed to delete user.");
       }
     }
   };
@@ -131,6 +135,7 @@ const Listing = () => {
           </nav>
         </div>
       </div>
+      
     </div>
   );
 };

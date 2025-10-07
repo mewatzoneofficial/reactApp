@@ -27,9 +27,7 @@ function Topbar() {
             <i className="fa-solid fa-bell fa-lg"></i>
             <span className="badge bg-danger">9</span>
           </button>
-          <button className="btn btn-outline-primary btn-sm">
-            Sticky Notes
-          </button>
+          
           <div className="dropdown">
             <button
               className="btn btn-light dropdown-toggle"
