@@ -75,10 +75,9 @@ export default function EditUser() {
       if (!res.ok) throw new Error(data.message || "Failed to update user");
 
       showSuccess("User updated successfully");
-      navigate("/users"); // redirect after success
+      navigate("/users"); 
     } catch (err) {
       console.error(err);
-      // alert("Error: " + err.message);
       showError("Failed to delete user.");
     } finally {
       setLoading(false);
