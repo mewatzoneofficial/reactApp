@@ -9,18 +9,28 @@ import Swal from "sweetalert2";
 const Listing = () => {
   const [users, setUsers] = useState([]);
   const [page, setPage] = useState(1);
-  const [limit] = useState(10); // Items per page
+  const [limit] = useState(10);
   const [totalPages, setTotalPages] = useState(1);
   const [totalEntries, setTotalEntries] = useState(0);
   const [loading, setLoading] = useState(false);
 
+  const [searchName, setSearchName] = useState("");
+  const [searchEmail, setSearchEmail] = useState("");
+
   const fetchUsers = async (pageNumber = 1) => {
     setLoading(true);
     try {
-      const res = await fetch(
-        `${API_URL}users?page=${pageNumber}&limit=${limit}`
-      );
+      const queryParams = new URLSearchParams({
+        page: pageNumber,
+        limit,
+      });
+
+      if (searchName) queryParams.append("name", searchName);
+      if (searchEmail) queryParams.append("email", searchEmail);
+
+      const res = await fetch(`${API_URL}users?${queryParams.toString()}`);
       const data = await res.json();
+
       setUsers(Array.isArray(data.data.results) ? data.data.results : []);
       setPage(data.data.page || 1);
       setTotalPages(data.data.totalPages || 1);
@@ -43,61 +53,43 @@ const Listing = () => {
     }
   };
 
-const handleDelete = async (id) => {
-  const confirm = await Swal.fire({
-    title: "Are you sure?",
-    text: "This action cannot be undone.",
-    icon: "warning",
-    showCancelButton: true,
-    confirmButtonColor: "#d33",
-    cancelButtonColor: "#6c757d",
-    confirmButtonText: "Yes, delete it!",
-  });
+  const handleDelete = async (id) => {
+    const result = await Swal.fire({
+      title: "Are you sure?",
+      text: "This action cannot be undone.",
+      icon: "warning",
+      position: "top-end",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#6c757d",
+      confirmButtonText: "Yes, delete it!",
+      cancelButtonText: "Cancel",
+    });
 
-  if (confirm.isConfirmed) {
-    try {
-      const res = await fetch(`${API_URL}users/${id}`, { method: "DELETE" });
-      if (!res.ok) throw new Error("Failed to delete user");
+    if (result.isConfirmed) {
+      try {
+        const res = await fetch(`${API_URL}users/${id}`, { method: "DELETE" });
+        if (!res.ok) throw new Error("Failed to delete user");
 
-      await showSuccess("Deleted!", "User has been deleted successfully.");
-      fetchUsers(page);
-    } catch (err) {
-      await showError("Error!", err.message || "Failed to delete user.");
+        await showSuccess("User has been deleted successfully.");
+        fetchUsers(page);
+      } catch (err) {
+        await showError("Error!", err.message || "Failed to delete user.");
+      }
     }
-  }
-};
+  };
 
+  const handleSearch = () => {
+    setPage(1);
+    fetchUsers(1);
+  };
 
-
-  // const handleDelete = async (id) => {
-  //   if (window.confirm("Are you sure you want to delete this user?")) {
-  //     try {
-  //       await fetch(`${API_URL}users/${id}`, { method: "DELETE" });
-  //       // showSuccess("User deleted successfully!");
-  //       // ✅ Success Alert
-  //     await Swal.fire({
-  //       title: "User Created!",
-  //       text: "The user has been deleted successfully.",
-  //       icon: "success",
-  //       confirmButtonText: "OK",
-  //       confirmButtonColor: "#198754",
-  //     });
-      
-  //       fetchUsers(page);
-  //     } catch (err) {
-  //       console.error("Failed to delete user:", err);
-  //       // showError("Failed to delete user.");
-  //       // ❌ Error Alert
-  //       Swal.fire({
-  //         title: "Error!",
-  //         text: err.message || "Failed to create user.",
-  //         icon: "error",
-  //         confirmButtonText: "Try Again",
-  //         confirmButtonColor: "#d33",
-  //       });
-  //     }
-  //   }
-  // };
+  const handleReset = () => {
+    setSearchName("");
+    setSearchEmail("");
+    setPage(1);
+    fetchUsers(1);
+  };
 
   return (
     <div>
@@ -111,6 +103,51 @@ const handleDelete = async (id) => {
       </div>
 
       <div className="card p-3">
+        {/* 🔍 Search Fields */}
+        <div className="row m-3">
+          <div className="col-md-4">
+            <label className="form-label fw-medium">Name</label>
+            <input
+              type="text"
+              name="name"
+              value={searchName}
+              onChange={(e) => setSearchName(e.target.value)}
+              className="form-control"
+              placeholder="Search Name"
+            />
+          </div>
+
+          <div className="col-md-4">
+            <label className="form-label fw-medium">Email</label>
+            <input
+              type="text"
+              name="email"
+              value={searchEmail}
+              onChange={(e) => setSearchEmail(e.target.value)}
+              className="form-control"
+              placeholder="Search Email"
+            />
+          </div>
+
+          <div className="col-md-4 d-flex align-items-end gap-2">
+            <button
+              onClick={handleSearch}
+              className="btn btn-primary w-50"
+              disabled={loading}
+            >
+              Search
+            </button>
+            <button
+              onClick={handleReset}
+              className="btn btn-secondary w-50"
+              disabled={loading}
+            >
+              Reset
+            </button>
+          </div>
+        </div>
+
+        {/* 📋 Table */}
         {loading ? (
           <p>Loading...</p>
         ) : (
@@ -163,6 +200,7 @@ const handleDelete = async (id) => {
           </div>
         )}
 
+        {/* Pagination Info */}
         <div className="d-flex justify-content-between align-items-center mt-2">
           <small>
             Showing {(page - 1) * limit + 1} to{" "}
@@ -179,7 +217,6 @@ const handleDelete = async (id) => {
           </nav>
         </div>
       </div>
-      
     </div>
   );
 };

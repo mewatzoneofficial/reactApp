@@ -1,27 +1,40 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import Pagination from "../components/Pagination";
+import { API_URL } from "../config";
+import "react-toastify/dist/ReactToastify.css";
+import { showError, showSuccess } from "../utils/toast";
+import Swal from "sweetalert2";
 
 const Listing = () => {
   const [users, setUsers] = useState([]);
   const [page, setPage] = useState(1);
-  const [limit] = useState(10); // Items per page
+  const [limit] = useState(10);
   const [totalPages, setTotalPages] = useState(1);
   const [totalEntries, setTotalEntries] = useState(0);
   const [loading, setLoading] = useState(false);
 
+  const [searchName, setSearchName] = useState("");
+  const [searchEmail, setSearchEmail] = useState("");
+
   const fetchUsers = async (pageNumber = 1) => {
     setLoading(true);
     try {
-      const res = await fetch(
-        `http://localhost:4000/users?page=${pageNumber}&limit=${limit}`
-      );
+      const queryParams = new URLSearchParams({
+        page: pageNumber,
+        limit,
+      });
+
+      if (searchName) queryParams.append("name", searchName);
+      if (searchEmail) queryParams.append("email", searchEmail);
+
+      const res = await fetch(`${API_URL}users?${queryParams.toString()}`);
       const data = await res.json();
-      // Ensure data.data is an array
-      setUsers(Array.isArray(data.data) ? data.data : []);
-      setPage(data.page || 1);
-      setTotalPages(data.totalPages || 1);
-      setTotalEntries(data.total || 0);
+
+      setUsers(Array.isArray(data.data.results) ? data.data.results : []);
+      setPage(data.data.page || 1);
+      setTotalPages(data.data.totalPages || 1);
+      setTotalEntries(data.data.total || 0);
     } catch (err) {
       console.error("Error loading users:", err);
       setUsers([]);
@@ -41,15 +54,41 @@ const Listing = () => {
   };
 
   const handleDelete = async (id) => {
-    if (window.confirm("Are you sure you want to delete this user?")) {
+    const result = await Swal.fire({
+      title: "Are you sure?",
+      text: "This action cannot be undone.",
+      icon: "warning",
+      position: "top-end",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#6c757d",
+      confirmButtonText: "Yes, delete it!",
+      cancelButtonText: "Cancel",
+    });
+
+    if (result.isConfirmed) {
       try {
-        await fetch(`http://localhost:4000/users/${id}`, { method: "DELETE" });
-        // Refetch users after delete
+        const res = await fetch(`${API_URL}users/${id}`, { method: "DELETE" });
+        if (!res.ok) throw new Error("Failed to delete user");
+
+        await showSuccess("User has been deleted successfully.");
         fetchUsers(page);
       } catch (err) {
-        console.error("Failed to delete user:", err);
+        await showError("Error!", err.message || "Failed to delete user.");
       }
     }
+  };
+
+  const handleSearch = () => {
+    setPage(1);
+    fetchUsers(1);
+  };
+
+  const handleReset = () => {
+    setSearchName("");
+    setSearchEmail("");
+    setPage(1);
+    fetchUsers(1);
   };
 
   return (
@@ -57,16 +96,58 @@ const Listing = () => {
       <div className="d-flex justify-content-between align-items-center mb-3">
         <h4 className="fw-semibold">Users</h4>
         <div>
-          <button className="btn btn-outline-primary btn-sm me-2">
-            <i className="fa-solid fa-list"></i> Users
-          </button>
-          <button className="btn btn-primary-custom btn-sm">
-            <i className="fa-solid fa-plus"></i> Add New Leave
-          </button>
+          <NavLink to="/users/create" className="btn btn-primary btn-sm me-2">
+            <i className="fa-solid fa-plus"></i> Add New User
+          </NavLink>
         </div>
       </div>
 
       <div className="card p-3">
+        {/* 🔍 Search Fields */}
+        <div className="row m-3">
+          <div className="col-md-4">
+            <label className="form-label fw-medium">Name</label>
+            <input
+              type="text"
+              name="name"
+              value={searchName}
+              onChange={(e) => setSearchName(e.target.value)}
+              className="form-control"
+              placeholder="Search Name"
+            />
+          </div>
+
+          <div className="col-md-4">
+            <label className="form-label fw-medium">Email</label>
+            <input
+              type="text"
+              name="email"
+              value={searchEmail}
+              onChange={(e) => setSearchEmail(e.target.value)}
+              className="form-control"
+              placeholder="Search Email"
+            />
+          </div>
+
+          <div className="col-md-4 d-flex align-items-end gap-2">
+            <button
+              onClick={handleSearch}
+              className="btn btn-primary w-50"
+              disabled={loading}
+            >
+              Search
+            </button>
+            <button
+              onClick={handleReset}
+              className="btn btn-secondary w-50"
+              disabled={loading}
+            >
+              Reset
+            </button>
+          </div>
+        </div>
+
+        {/* 📋 Table */}
         {loading ? (
           <p>Loading...</p>
         ) : (
@@ -86,7 +167,7 @@ const Listing = () => {
                 {users.length === 0 ? (
                   <tr>
                     <td colSpan="6" className="text-center">
-                      No users found.
+                      Record Not Found.
                     </td>
                   </tr>
                 ) : (
@@ -119,6 +200,7 @@ const Listing = () => {
           </div>
         )}
 
+        {/* Pagination Info */}
         <div className="d-flex justify-content-between align-items-center mt-2">
           <small>
             Showing {(page - 1) * limit + 1} to{" "}

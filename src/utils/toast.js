@@ -1,49 +1,36 @@
-// import { toast } from "react-toastify";
-
-// export const showSuccess = (message) => {
-//   toast.success(message, {
-//     position: "top-right",
-//     autoClose: 3000,
-//     hideProgressBar: true,
-//   });
-// };
-
-// export const showError = (message) => {
-//   toast.error(message, {
-//     position: "top-right",
-//     autoClose: 3000,
-//     hideProgressBar: true,
-//   });
-// };
-
-// export const showInfo = (message) => {
-//   toast.info(message, {
-//     position: "top-right",
-//     autoClose: 3000,
-//     hideProgressBar: true,
-//   });
-// };
-
-
-// utils/alert.js
 import Swal from "sweetalert2";
 
-export const showSuccess = (title = "Success", text = "Operation completed successfully.") => {
+export const showSuccess = (title = "Operation completed successfully.") => {
   return Swal.fire({
     title,
-    text,
     icon: "success",
-    confirmButtonText: "OK",
+    position: "top-end",
+    showConfirmButton: false,
     confirmButtonColor: "#198754",
+    timerProgressBar: true,
+    timer: 2000,
   });
 };
 
-export const showError = (title = "Error", text = "Something went wrong.") => {
+export const showError = (title = "Something went wrong.") => {
   return Swal.fire({
     title,
-    text,
     icon: "error",
-    confirmButtonText: "Try Again",
+    position: "top-end",
+    showConfirmButton: false,
     confirmButtonColor: "#d33",
+    timer: 2000,
+  });
+};
+
+export const showToast = (title, icon = "success", duration = 2000, position = "top-end") => {
+  return Swal.fire({
+    title,
+    icon,
+    toast: true,
+    position,
+    showConfirmButton: false,
+    timer: duration,
+    timerProgressBar: true,
   });
 };

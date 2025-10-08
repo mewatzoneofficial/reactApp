@@ -1,6 +1,14 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 function Topbar() {
+  const navigate = useNavigate;
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    navigate("/");
+  };
+
   const [sidebarOpen, setSidebarOpen] = useState(false);
   return (
     <>

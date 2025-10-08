@@ -1,0 +1,91 @@
+/* Center the login box on the screen */
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background: #f0f2f5;
+  font-family: 'Arial', sans-serif;
+}
+
+.login-box {
+  background: #fff;
+  padding: 40px 30px;
+  border-radius: 10px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+}
+
+.login-box h2 {
+  margin-bottom: 30px;
+  color: #333;
+}
+
+.input-group {
+  margin-bottom: 20px;
+  text-align: left;
+}
+
+.input-group label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+  color: #555;
+}
+
+.input-group input {
+  width: 100%;
+  padding: 12px 15px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  outline: none;
+  transition: 0.3s;
+}
+
+.input-group input:focus {
+  border-color: #007bff;
+}
+
+.login-btn {
+  width: 100%;
+  padding: 12px;
+  background: #007bff;
+  border: none;
+  color: #fff;
+  border-radius: 6px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.login-btn:hover {
+  background: #0056b3;
+}
+
+.footer-text {
+  margin-top: 15px;
+  font-size: 14px;
+}
+
+.footer-text a {
+  color: #007bff;
+  text-decoration: none;
+}
+
+.footer-text a:hover {
+  text-decoration: underline;
+}
+
+/* Red text for error messages */
+.error {
+  color: red;
+  font-size: 0.9rem;
+  margin-top: 4px;
+}
+
+/* Red border for invalid inputs */
+.input-error {
+  border: 1px solid red;
+}

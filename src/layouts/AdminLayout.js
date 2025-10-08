@@ -8,6 +8,7 @@ import Footer from "../components/Footer";
 import { Outlet } from "react-router-dom";
 
 const AdminLayout = () => {
+  
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
