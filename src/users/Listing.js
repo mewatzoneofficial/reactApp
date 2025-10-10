@@ -5,6 +5,7 @@ import { API_URL } from "../config";
 import "react-toastify/dist/ReactToastify.css";
 import { showError, showSuccess } from "../utils/toast";
 import Swal from "sweetalert2";
+import { formatDMY } from "../utils/common";
 
 const Listing = () => {
   const [users, setUsers] = useState([]);
@@ -172,22 +173,22 @@ const Listing = () => {
                   </tr>
                 ) : (
                   users.map((user) => (
-                    <tr key={user.adminID}>
-                      <td>{user.adminID}</td>
+                    <tr key={user.faculityID}>
+                      <td>{user.faculityID}</td>
                       <td>{user.name}</td>
-                      <td>{user.official_email}</td>
+                      <td>{user.email}</td>
                       <td>{user.mobile}</td>
-                      <td>{user.created_at}</td>
+                      <td>{formatDMY(user.created_at)}</td>
                       <td className="text-right">
                         <Link
-                          to={`/users/edit/${user.adminID}`}
+                          to={`/users/edit/${user.faculityID}`}
                           className="text-warning me-3"
                         >
                           Edit
                         </Link>
                         <button
                           className="btn btn-link text-danger p-0"
-                          onClick={() => handleDelete(user.adminID)}
+                          onClick={() => handleDelete(user.faculityID)}
                         >
                           Delete
                         </button>

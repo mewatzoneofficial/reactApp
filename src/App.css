@@ -36,3 +36,30 @@
     transform: rotate(360deg);
   }
 }
+
+
+
+
+.page-link {
+  color: #333;
+  background-color: #f8f9fa;
+  border: 1px solid #dee2e6;
+  margin: 0 2px;
+}
+
+.page-item.active .page-link {
+  background-color: #87aee8;
+  border-color: #6d97d5;
+  color: #fff;
+}
+
+.page-item.disabled .page-link {
+  background-color: #e9ecef;
+  color: #6c757d;
+  border-color: #dee2e6;
+  cursor: not-allowed;
+}
+
+.pagination {
+  margin: 0;
+}

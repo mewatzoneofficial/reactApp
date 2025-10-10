@@ -8,25 +8,20 @@ import Footer from "../components/Footer";
 import { Outlet } from "react-router-dom";
 
 const AdminLayout = () => {
-  
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
     <div className="dashboard-wrapper">
-      {/* SIDEBAR */}
       <div className={`sidebar ${sidebarOpen ? "show" : ""}`} id="sidebar">
-        <div className="brand">R</div>
+        <div className="brand">R & D</div>
         <Navbar />
       </div>
 
-      {/* MAIN CONTENT */}
       <div className={`content ${sidebarOpen ? "expanded" : ""}`} id="content">
-        {/* TOPBAR */}
         <Topbar />
 
-        {/* PAGE CONTENT */}
         <div className="container-fluid mt-4">
-            <Outlet/>
+          <Outlet />
         </div>
         <Footer />
       </div>

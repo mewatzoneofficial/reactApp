@@ -28,7 +28,7 @@ const Listing = () => {
       if (searchName) queryParams.append("name", searchName);
       if (searchEmail) queryParams.append("email", searchEmail);
 
-      const res = await fetch(`${API_URL}users?${queryParams.toString()}`);
+      const res = await fetch(`${API_URL}staffs?${queryParams.toString()}`);
       const data = await res.json();
 
       setUsers(Array.isArray(data.data.results) ? data.data.results : []);
@@ -68,7 +68,7 @@ const Listing = () => {
 
     if (result.isConfirmed) {
       try {
-        const res = await fetch(`${API_URL}users/${id}`, { method: "DELETE" });
+        const res = await fetch(`${API_URL}staffs/${id}`, { method: "DELETE" });
         if (!res.ok) throw new Error("Failed to delete user");
 
         await showSuccess("User has been deleted successfully.");
@@ -94,10 +94,10 @@ const Listing = () => {
   return (
     <div>
       <div className="d-flex justify-content-between align-items-center mb-3">
-        <h4 className="fw-semibold">Users</h4>
+        <h4 className="fw-semibold">Staffs</h4>
         <div>
-          <NavLink to="/users/create" className="btn btn-primary btn-sm me-2">
-            <i className="fa-solid fa-plus"></i> Add New User
+          <NavLink to="/staffs/create" className="btn btn-primary btn-sm me-2">
+            <i className="fa-solid fa-plus"></i> Add New Staff
           </NavLink>
         </div>
       </div>
@@ -180,7 +180,7 @@ const Listing = () => {
                       <td>{user.created_at}</td>
                       <td className="text-right">
                         <Link
-                          to={`/users/edit/${user.adminID}`}
+                          to={`/staffs/edit/${user.adminID}`}
                           className="text-warning me-3"
                         >
                           Edit
