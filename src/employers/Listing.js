@@ -3,11 +3,11 @@ import { Link, NavLink } from "react-router-dom";
 import Pagination from "../components/Pagination";
 import { API_URL } from "../config";
 import "react-toastify/dist/ReactToastify.css";
-import { confirmAction, showError, showSuccess } from "../utils/toast";
-import { formatDMY } from "../utils/common";
+import { showError, showSuccess } from "../utils/toast";
+import Swal from "sweetalert2";
 
 const Listing = () => {
-  const [results, setResults] = useState([]);
+  const [users, setUsers] = useState([]);
   const [page, setPage] = useState(1);
   const [limit] = useState(10);
   const [totalPages, setTotalPages] = useState(1);
@@ -16,7 +16,6 @@ const Listing = () => {
 
   const [searchName, setSearchName] = useState("");
   const [searchEmail, setSearchEmail] = useState("");
-  const [searchMobile, setSearchMobile] = useState("");
 
   const fetchUsers = async (pageNumber = 1) => {
     setLoading(true);
@@ -28,18 +27,17 @@ const Listing = () => {
 
       if (searchName) queryParams.append("name", searchName);
       if (searchEmail) queryParams.append("email", searchEmail);
-      if (searchMobile) queryParams.append("mobile", searchMobile);
 
       const res = await fetch(`${API_URL}staffs?${queryParams.toString()}`);
       const data = await res.json();
 
-      setResults(Array.isArray(data.data.results) ? data.data.results : []);
+      setUsers(Array.isArray(data.data.results) ? data.data.results : []);
       setPage(data.data.page || 1);
       setTotalPages(data.data.totalPages || 1);
       setTotalEntries(data.data.total || 0);
     } catch (err) {
       console.error("Error loading users:", err);
-      setResults([]);
+      setUsers([]);
     } finally {
       setLoading(false);
     }
@@ -56,20 +54,28 @@ const Listing = () => {
   };
 
   const handleDelete = async (id) => {
-    const isConfirmed = await confirmAction({
-      text: "You want to delete this?",
+    const result = await Swal.fire({
+      title: "Are you sure?",
+      text: "This action cannot be undone.",
+      icon: "warning",
+      position: "top-end",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#6c757d",
       confirmButtonText: "Yes, delete it!",
       cancelButtonText: "Cancel",
     });
-    if (!isConfirmed) return;
-    try {
-      const res = await fetch(`${API_URL}staffs/${id}`, { method: "DELETE" });
-      if (!res.ok) throw new Error("Failed to delete user");
 
-      await showSuccess("User has been deleted successfully.");
-      fetchUsers(page);
-    } catch (err) {
-      await showError("Error!", err.message || "Failed to delete user.");
+    if (result.isConfirmed) {
+      try {
+        const res = await fetch(`${API_URL}staffs/${id}`, { method: "DELETE" });
+        if (!res.ok) throw new Error("Failed to delete user");
+
+        await showSuccess("User has been deleted successfully.");
+        fetchUsers(page);
+      } catch (err) {
+        await showError("Error!", err.message || "Failed to delete user.");
+      }
     }
   };
 
@@ -81,14 +87,9 @@ const Listing = () => {
   const handleReset = () => {
     setSearchName("");
     setSearchEmail("");
-    setSearchMobile("");
     setPage(1);
     fetchUsers(1);
   };
-
-  useEffect(() => {
-    fetchUsers(1);
-  }, [searchName, searchEmail, searchMobile]);
 
   return (
     <div>
@@ -102,66 +103,51 @@ const Listing = () => {
       </div>
 
       <div className="card p-3">
-        <div className="searchInput">
-          <div className="row m-3">
-            <div className="col-md-4">
-              <label className="form-label fw-medium">Name</label>
-              <input
-                type="text"
-                name="name"
-                value={searchName}
-                onChange={(e) => setSearchName(e.target.value)}
-                className="form-control"
-                placeholder="Search Name"
-              />
-            </div>
-
-            <div className="col-md-4">
-              <label className="form-label fw-medium">Email</label>
-              <input
-                type="text"
-                name="email"
-                value={searchEmail}
-                onChange={(e) => setSearchEmail(e.target.value)}
-                className="form-control"
-                placeholder="Search Email"
-              />
-            </div>
-
-            <div className="col-md-4">
-              <label className="form-label fw-medium">Mobile</label>
-              <input
-                type="text"
-                name="mobile"
-                value={searchMobile}
-                onChange={(e) => setSearchMobile(e.target.value)}
-                className="form-control"
-                placeholder="Search Mobile"
-              />
-            </div>
+        {/* 🔍 Search Fields */}
+        <div className="row m-3">
+          <div className="col-md-4">
+            <label className="form-label fw-medium">Name</label>
+            <input
+              type="text"
+              name="name"
+              value={searchName}
+              onChange={(e) => setSearchName(e.target.value)}
+              className="form-control"
+              placeholder="Search Name"
+            />
           </div>
-          <div className="row m-3">
-            <div className="col-md-4 d-flex align-items-end gap-2">
-              <button
-                onClick={handleSearch}
-                className="btn btn-primary w-40"
-                disabled={loading}
-              >
-                Search
-              </button>
-              <button
-                onClick={handleReset}
-                className="btn btn-secondary w-40"
-                disabled={loading}
-              >
-                Reset
-              </button>
-            </div>
+
+          <div className="col-md-4">
+            <label className="form-label fw-medium">Email</label>
+            <input
+              type="text"
+              name="email"
+              value={searchEmail}
+              onChange={(e) => setSearchEmail(e.target.value)}
+              className="form-control"
+              placeholder="Search Email"
+            />
+          </div>
+
+          <div className="col-md-4 d-flex align-items-end gap-2">
+            <button
+              onClick={handleSearch}
+              className="btn btn-primary w-50"
+              disabled={loading}
+            >
+              Search
+            </button>
+            <button
+              onClick={handleReset}
+              className="btn btn-secondary w-50"
+              disabled={loading}
+            >
+              Reset
+            </button>
           </div>
         </div>
-      </div>
 
-      <div className="card p-3">
+        {/* 📋 Table */}
         {loading ? (
           <p>Loading...</p>
         ) : (
@@ -178,30 +164,30 @@ const Listing = () => {
                 </tr>
               </thead>
               <tbody>
-                {results.length === 0 ? (
+                {users.length === 0 ? (
                   <tr>
                     <td colSpan="6" className="text-center">
                       Record Not Found.
                     </td>
                   </tr>
                 ) : (
-                  results.map((result) => (
-                    <tr key={result.adminID}>
-                      <td>{result.adminID}</td>
-                      <td>{result.name}</td>
-                      <td>{result.official_email}</td>
-                      <td>{result.mobile}</td>
-                      <td>{formatDMY(result.created_at)}</td>
+                  users.map((user) => (
+                    <tr key={user.adminID}>
+                      <td>{user.adminID}</td>
+                      <td>{user.name}</td>
+                      <td>{user.official_email}</td>
+                      <td>{user.mobile}</td>
+                      <td>{user.created_at}</td>
                       <td className="text-right">
                         <Link
-                          to={`/staffs/edit/${result.adminID}`}
+                          to={`/staffs/edit/${user.adminID}`}
                           className="text-warning me-3"
                         >
                           Edit
                         </Link>
                         <button
                           className="btn btn-link text-danger p-0"
-                          onClick={() => handleDelete(result.adminID)}
+                          onClick={() => handleDelete(user.adminID)}
                         >
                           Delete
                         </button>

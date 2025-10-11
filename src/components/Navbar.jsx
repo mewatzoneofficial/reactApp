@@ -13,11 +13,17 @@ function Navbar() {
       <NavLink className="nav-link" to="/users">
         <i className="fa-solid fa-users"></i> Users
       </NavLink>
+      
+      <NavLink className="nav-link" to="/employers">
+        <i className="fa-solid fa-cogs"></i> Employer
+      </NavLink>
+
+      <NavLink className="nav-link" to="/jobs">
+        <i className="fa-solid fa-cogs"></i> Job
+      </NavLink>
+
       <NavLink className="nav-link" to="/settings">
         <i className="fa-solid fa-cogs"></i> Settings
-      </NavLink>
-      <NavLink className="nav-link" to="/orders">
-        <i className="fa-solid fa-cogs"></i> Order
       </NavLink>
       
     </nav>
