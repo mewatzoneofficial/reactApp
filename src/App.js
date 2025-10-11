@@ -26,12 +26,11 @@ import Order from "./components/Order";
 import NotFound from "./components/NotFound";
 
 function App() {
-  const isAuthenticated = !!localStorage.getItem("token");
 
   return (
     <BrowserRouter>
       <Routes>
-        <Route element={<AuthAdmin isAuthenticated={isAuthenticated} />}>
+        <Route element={<AuthAdmin />}>
           <Route path="/" element={<AdminLayout />}>
             <Route index element={<Navigate to="/dashboard" />} />
             <Route path="dashboard" element={<Dashboard />} />
