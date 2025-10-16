@@ -1,35 +1,48 @@
 import React from "react";
-import { useForm } from "react-hook-form";
+import { useForm, SubmitHandler } from "react-hook-form";
 import { NavLink, useNavigate } from "react-router-dom";
 import { API_URL } from "../config";
 import { showError, showSuccess } from "../utils/toast";
 
+interface UserFormData {
+  name: string;
+  email: string;
+  mobile: number;
+  official_email?: string;
+  official_mobile?: string;
+  password: string;
+  dob: string;
+  joining_date: string;
+  gender: "Male" | "Female" | "Other";
+  status: "Active" | "Inactive";
+  category: string[];
+}
+
 export default function AddUser() {
   const navigate = useNavigate();
-const today = new Date().toISOString().split("T")[0]; // "YYYY-MM-DD"
+  const today = new Date().toISOString().split("T")[0];
+
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
     reset,
-    watch 
-  } = useForm({
-  defaultValues: {
-    status: "Active", 
-    category: ["Education"],
-    gender: "Male",
-    dob: today,
-    joining_date: today,
-  },
-});
+  } = useForm<UserFormData>({
+    defaultValues: {
+      mobile: 9876543210,
+      status: "Active",
+      category: ["Education"],
+      gender: "Male",
+      dob: today,
+      joining_date: today,
+    },
+  });
 
-  const onSubmit = async (formData) => {
+  const onSubmit: SubmitHandler<UserFormData> = async (formData) => {
     try {
       const res = await fetch(`${API_URL}users`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
 
@@ -133,9 +146,9 @@ const today = new Date().toISOString().split("T")[0]; // "YYYY-MM-DD"
               type="text"
               {...register("official_mobile", {
                 pattern: {
-                  value: /^[0-9]{10,15}$/,
+                  value: /^[0-9]{10,12}$/,
                   message:
-                    "Enter a valid official mobile number (10–15 digits).",
+                    "Enter a valid official mobile number (10–12 digits).",
                 },
               })}
               className="form-control"
@@ -207,48 +220,41 @@ const today = new Date().toISOString().split("T")[0]; // "YYYY-MM-DD"
               <option value="Female">Female</option>
               <option value="Other">Other</option>
             </select>
-            
             {errors.gender && (
               <div className="invalid-feedback">{errors.gender.message}</div>
             )}
           </div>
 
-
           {/* Status */}
           <div className="col-md-6">
             <label className="form-label fw-medium">Status</label>
             <div>
-              <div className="form-check">
-                <input
-                  type="radio"
-                  value="Active"
-                  id="statusActive"
-                  className="form-check-input"
-                  {...register("status", {
-                    required: "Select a valid status.",
-                  })}
-                />
-                <label htmlFor="statusActive" className="form-check-label">
-                  Active
-                </label>
-              </div>
+              <input
+                type="radio"
+                value="Active"
+                id="status-Active"
+                className="form-check-input"
+                {...register("status", {
+                  required: "Select a valid status.",
+                })}
+              />
+              <label htmlFor="status-Active" className="form-check-label">
+                Active
+              </label>
 
-              <div className="form-check">
-                <input
-                  type="radio"
-                  value="Inactive"
-                  id="statusInactive"
-                  className="form-check-input"
-                  {...register("status", {
-                    required: "Select a valid status.",
-                  })}
-                />
-                <label htmlFor="statusInactive" className="form-check-label">
-                  Inactive
-                </label>
-              </div>
+              <input
+                type="radio"
+                value="Inactive"
+                id="status-Inactive"
+                className="form-check-input"
+                {...register("status", {
+                  required: "Select a valid status.",
+                })}
+              />
+              <label htmlFor="status-Inactive" className="form-check-label">
+                Inactive
+              </label>
             </div>
-
             {errors.status && (
               <div className="invalid-feedback d-block">
                 {errors.status.message}
@@ -280,7 +286,6 @@ const today = new Date().toISOString().split("T")[0]; // "YYYY-MM-DD"
                 </div>
               ))}
             </div>
-
             {errors.category && (
               <div className="invalid-feedback d-block">
                 {errors.category.message}

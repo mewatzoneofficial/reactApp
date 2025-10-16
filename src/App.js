@@ -8,7 +8,7 @@ import UserCreate from "./users/Create";
 import UserEdit from "./users/Edit";
 
 import StaffList from "./staffs/Listing";
-import StaffCreate from "./staffs/Create";
+import StaffCreate from './staffs/Create.tsx';
 import StaffEdit from "./staffs/Edit";
 
 import EmployerList from "./employers/Listing";
