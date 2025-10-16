@@ -30,7 +30,7 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route element={<AuthAdmin />}>
+        {/* <Route element={<AuthAdmin />}> */}
           <Route path="/" element={<AdminLayout />}>
             <Route index element={<Navigate to="/dashboard" />} />
             <Route path="dashboard" element={<Dashboard />} />
@@ -63,7 +63,7 @@ function App() {
             <Route path="settings" element={<Setting />} />
             <Route path="orders" element={<Order />} />
           </Route>
-        </Route>
+        {/* </Route> */}
         <Route path="login" element={<Login />} />
         <Route path="*" element={<NotFound />} />
       </Routes>

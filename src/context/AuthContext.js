@@ -1,7 +1,7 @@
 import { createContext, useState, useEffect } from "react";
 import axios from "axios";
 
-export const AuthContext = createContext();
+export const AuthContext = createContext('them');
 
 const API = axios.create({
   baseURL: "http://localhost:4000",

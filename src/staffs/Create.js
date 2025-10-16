@@ -6,13 +6,22 @@ import { showError, showSuccess } from "../utils/toast";
 
 export default function AddUser() {
   const navigate = useNavigate();
-
+const today = new Date().toISOString().split("T")[0]; // "YYYY-MM-DD"
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
     reset,
-  } = useForm();
+    watch 
+  } = useForm({
+  defaultValues: {
+    status: "Active", 
+    category: ["Education"],
+    gender: "Male",
+    dob: today,
+    joining_date: today,
+  },
+});
 
   const onSubmit = async (formData) => {
     try {
@@ -39,11 +48,9 @@ export default function AddUser() {
   return (
     <div className="container py-4">
       <div className="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-4">
-        <h4 className="fw-semibold mb-3 mb-md-0">
-          <i className="fa-solid fa-user-plus me-2 text-primary"></i> Add New User
-        </h4>
+        <h4 className="fw-semibold mb-3 mb-md-0">Add New User</h4>
         <NavLink to="/users" className="btn btn-outline-primary btn-sm me-2">
-          <i className="fa-solid fa-list me-1"></i> View Users
+          <i className="fa-solid fa-list me-1"></i> Users
         </NavLink>
       </div>
 
@@ -91,8 +98,8 @@ export default function AddUser() {
               {...register("mobile", {
                 required: "Mobile number is required.",
                 pattern: {
-                  value: /^[0-9]{10,15}$/,
-                  message: "Enter a valid mobile number (10–15 digits).",
+                  value: /^[0-9]{10,11}$/,
+                  message: "Enter a valid mobile number (10–11 digits).",
                 },
               })}
               className={`form-control ${errors.mobile ? "is-invalid" : ""}`}
@@ -127,7 +134,8 @@ export default function AddUser() {
               {...register("official_mobile", {
                 pattern: {
                   value: /^[0-9]{10,15}$/,
-                  message: "Enter a valid official mobile number (10–15 digits).",
+                  message:
+                    "Enter a valid official mobile number (10–15 digits).",
                 },
               })}
               className="form-control"
@@ -173,25 +181,110 @@ export default function AddUser() {
             <label className="form-label fw-medium">Joining Date</label>
             <input
               type="date"
-              {...register("joining_date", { required: "Joining date is required." })}
-              className={`form-control ${errors.joining_date ? "is-invalid" : ""}`}
+              {...register("joining_date", {
+                required: "Joining date is required.",
+              })}
+              className={`form-control ${
+                errors.joining_date ? "is-invalid" : ""
+              }`}
             />
             {errors.joining_date && (
-              <div className="invalid-feedback">{errors.joining_date.message}</div>
+              <div className="invalid-feedback">
+                {errors.joining_date.message}
+              </div>
             )}
           </div>
 
           {/* Gender */}
           <div className="col-md-6">
             <label className="form-label fw-medium">Gender</label>
-            <select {...register("gender", { required: "Select a valid gender." })} className="form-select">
+            <select
+              {...register("gender", { required: "Select a valid gender." })}
+              className={`form-select ${errors.gender ? "is-invalid" : ""}`}
+            >
               <option value="">Select Gender</option>
               <option value="Male">Male</option>
               <option value="Female">Female</option>
               <option value="Other">Other</option>
             </select>
+            
             {errors.gender && (
               <div className="invalid-feedback">{errors.gender.message}</div>
+            )}
+          </div>
+
+
+          {/* Status */}
+          <div className="col-md-6">
+            <label className="form-label fw-medium">Status</label>
+            <div>
+              <div className="form-check">
+                <input
+                  type="radio"
+                  value="Active"
+                  id="statusActive"
+                  className="form-check-input"
+                  {...register("status", {
+                    required: "Select a valid status.",
+                  })}
+                />
+                <label htmlFor="statusActive" className="form-check-label">
+                  Active
+                </label>
+              </div>
+
+              <div className="form-check">
+                <input
+                  type="radio"
+                  value="Inactive"
+                  id="statusInactive"
+                  className="form-check-input"
+                  {...register("status", {
+                    required: "Select a valid status.",
+                  })}
+                />
+                <label htmlFor="statusInactive" className="form-check-label">
+                  Inactive
+                </label>
+              </div>
+            </div>
+
+            {errors.status && (
+              <div className="invalid-feedback d-block">
+                {errors.status.message}
+              </div>
+            )}
+          </div>
+
+          {/* Category */}
+          <div className="col-md-6">
+            <label className="form-label fw-medium">Category</label>
+            <div>
+              {["Health", "Finance", "Education"].map((cat) => (
+                <div className="form-check" key={cat}>
+                  <input
+                    type="checkbox"
+                    value={cat}
+                    id={`category-${cat}`}
+                    className="form-check-input"
+                    {...register("category", {
+                      required: "Select at least one category.",
+                    })}
+                  />
+                  <label
+                    htmlFor={`category-${cat}`}
+                    className="form-check-label"
+                  >
+                    {cat}
+                  </label>
+                </div>
+              ))}
+            </div>
+
+            {errors.category && (
+              <div className="invalid-feedback d-block">
+                {errors.category.message}
+              </div>
             )}
           </div>
 

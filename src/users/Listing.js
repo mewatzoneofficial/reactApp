@@ -6,6 +6,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { showError, showSuccess } from "../utils/toast";
 import Swal from "sweetalert2";
 import { formatDMY } from "../utils/common";
+import CustomLoading from "../components/CustomLoading";
 
 const Listing = () => {
   const [users, setUsers] = useState([]);
@@ -150,7 +151,7 @@ const Listing = () => {
 
         {/* 📋 Table */}
         {loading ? (
-          <p>Loading...</p>
+          <CustomLoading/>
         ) : (
           <div className="table-responsive">
             <table className="table table-bordered table-hover align-middle">
