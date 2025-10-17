@@ -1,11 +1,15 @@
-import { useContext } from "react";
-import { Navigate, Outlet } from "react-router-dom";
-import { AuthContext } from "../context/AuthContext";
+import React from "react";
+import { Navigate } from "react-router-dom";
 
-const AuthAdmin = () => {
-  const { user } = useContext(AuthContext); // ✅ useContext here
+const AuthAdmin = ({ children }) => {
+  const user = JSON.parse(localStorage.getItem("adminUser"));
+  const token = localStorage.getItem("adminToken");
 
-  return user ? <Outlet /> : <Navigate to="/login" />;
+  if (!user || !token) {
+    return <Navigate to="/login" replace />;
+  }
+
+  return children;
 };
 
 export default AuthAdmin;

@@ -8,7 +8,7 @@ import UserCreate from "./users/Create";
 import UserEdit from "./users/Edit";
 
 import StaffList from "./staffs/Listing";
-import StaffCreate from './staffs/Create.tsx';
+import StaffCreate from "./staffs/Create.tsx";
 import StaffEdit from "./staffs/Edit";
 
 import EmployerList from "./employers/Listing";
@@ -24,46 +24,51 @@ import AuthAdmin from "./middleware/AuthAdmin";
 import Login from "./Login";
 import Order from "./components/Order";
 import NotFound from "./components/NotFound";
+import Chat from "./Chat.js";
+import UserProfile from "./components/UserProfile.js";
 
 function App() {
-
   return (
     <BrowserRouter>
       <Routes>
-        {/* <Route element={<AuthAdmin />}> */}
-          <Route path="/" element={<AdminLayout />}>
-            <Route index element={<Navigate to="/dashboard" />} />
-            <Route path="dashboard" element={<Dashboard />} />
-            
-            <Route path="users">
-              <Route index element={<UserList />} />
-              <Route path="create" element={<UserCreate />} />
-              <Route path="edit/:id" element={<UserEdit />} />
-            </Route>
+        {/* <Route path="/" element={<AdminLayout />}> */}
+          <Route path="/" element={
+              <AuthAdmin>
+                <AdminLayout />
+              </AuthAdmin>
+            } >
+          <Route index element={<Navigate to="/dashboard" />} />
+          <Route path="profile" element={<UserProfile />} />
+          <Route path="dashboard" element={<Dashboard />} />
 
-            <Route path="staffs">
-              <Route index element={<StaffList />} />
-              <Route path="create" element={<StaffCreate />} />
-              <Route path="edit/:id" element={<StaffEdit />} />
-            </Route>
-
-            <Route path="employers">
-              <Route index element={<EmployerList />} />
-              <Route path="create" element={<EmployerCreate />} />
-              <Route path="edit/:id" element={<EmployerEdit />} />
-            </Route>
-
-            <Route path="jobs">
-              <Route index element={<JobList />} />
-              <Route path="create" element={<JobCreate />} />
-              <Route path="edit/:id" element={<JobEdit />} />
-            </Route>
-
-
-            <Route path="settings" element={<Setting />} />
-            <Route path="orders" element={<Order />} />
+          <Route path="users">
+            <Route index element={<UserList />} />
+            <Route path="create" element={<UserCreate />} />
+            <Route path="edit/:id" element={<UserEdit />} />
           </Route>
-        {/* </Route> */}
+
+          <Route path="staffs">
+            <Route index element={<StaffList />} />
+            <Route path="create" element={<StaffCreate />} />
+            <Route path="edit/:id" element={<StaffEdit />} />
+          </Route>
+
+          <Route path="employers">
+            <Route index element={<EmployerList />} />
+            <Route path="create" element={<EmployerCreate />} />
+            <Route path="edit/:id" element={<EmployerEdit />} />
+          </Route>
+
+          <Route path="jobs">
+            <Route index element={<JobList />} />
+            <Route path="create" element={<JobCreate />} />
+            <Route path="edit/:id" element={<JobEdit />} />
+          </Route>
+
+          <Route path="chats" element={<Chat />} />
+          <Route path="settings" element={<Setting />} />
+          <Route path="orders" element={<Order />} />
+        </Route>
         <Route path="login" element={<Login />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
