@@ -2,7 +2,6 @@ import React from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import AdminLayout from "./layouts/AdminLayout";
 
-import Dashboard from "./Dashboard";
 import UserList from "./users/Listing";
 import UserCreate from "./users/Create";
 import UserEdit from "./users/Edit";
@@ -26,6 +25,7 @@ import Order from "./components/Order";
 import NotFound from "./components/NotFound";
 import Chat from "./Chat.js";
 import UserProfile from "./components/UserProfile.js";
+import Dashboard from "./dashboard/Dashboard.js";
 
 function App() {
   return (

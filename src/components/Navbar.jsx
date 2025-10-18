@@ -25,6 +25,9 @@ function Navbar() {
       <NavLink className="nav-link" to="/settings">
         <i className="fa-solid fa-cogs"></i> Settings
       </NavLink>
+      <NavLink className="nav-link" to="/chats">
+        <i className="fa-solid fa-cogs"></i> Chats
+      </NavLink>
       
     </nav>
   );
