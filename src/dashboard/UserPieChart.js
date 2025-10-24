@@ -37,21 +37,12 @@ const UserPieChart = () => {
     fetchUserStats();
   }, []);
 
-  const data = useMemo(() => {
-  const stats = [
-    { name: "Total Users", value: userStats.total_faculity_users || 0 },
-    { name: "Today Users", value: userStats.total_today_faculty_users || 0 },
-    { name: "Incomplete Users", value: userStats.total_incomplete_faculty_users || 0 },
-    { name: "Today Block Request", value: userStats.total_blocked_faculty_users || 0 },
-  ];
-
-  // Force tiny slices to be at least 1 to show in the chart
-  return stats.map(item => ({
-    ...item,
-    value: item.value === 0 ? 0.1 : item.value
-  }));
-}, [userStats]);
-
+const data = useMemo(() => [
+  { name: "Total Users", value: userStats.total_faculity_users || 0 },
+  { name: "Today Users", value: userStats.total_today_faculty_users || 0 },
+  { name: "Incomplete Users", value: userStats.total_incomplete_faculty_users || 0 },
+  { name: "Today Block Request", value: userStats.total_blocked_faculty_users || 0 },
+], [userStats]);
 
   if (loading) return <div>Loading chart...</div>;
   if (error) return <div className="text-danger">Error: {error}</div>;

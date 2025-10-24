@@ -24,8 +24,8 @@ import Login from "./Login";
 import Order from "./components/Order";
 import NotFound from "./components/NotFound";
 import Chat from "./Chat.js";
-import UserProfile from "./components/UserProfile.js";
 import Dashboard from "./dashboard/Dashboard.js";
+import UserProfile from "./dashboard/UserProfile.tsx";
 
 function App() {
   return (
