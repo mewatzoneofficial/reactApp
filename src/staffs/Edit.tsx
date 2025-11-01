@@ -1,26 +1,48 @@
 import React from "react";
-import { useForm } from "react-hook-form";
+import { useForm, SubmitHandler } from "react-hook-form";
 import { NavLink, useNavigate } from "react-router-dom";
-import { API_URL } from "../config";
 import { showError, showSuccess } from "../utils/toast";
+import API_URL, { STAFF_TITLE} from "../utils/config";
+
+interface UserFormData {
+  name: string;
+  email: string;
+  mobile: number;
+  official_email?: string;
+  official_mobile?: string;
+  password: string;
+  dob: string;
+  joining_date: string;
+  gender: "Male" | "Female" | "Other";
+  status: "Active" | "Inactive";
+  category: string[];
+}
 
 export default function EditUser() {
   const navigate = useNavigate();
+  const today = new Date().toISOString().split("T")[0];
 
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
     reset,
-  } = useForm();
+  } = useForm<UserFormData>({
+    defaultValues: {
+      mobile: 9876543210,
+      status: "Active",
+      category: ["Education"],
+      gender: "Male",
+      dob: today,
+      joining_date: today,
+    },
+  });
 
-  const onSubmit = async (formData) => {
+  const onSubmit: SubmitHandler<UserFormData> = async (formData) => {
     try {
       const res = await fetch(`${API_URL}users`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
 
@@ -39,9 +61,9 @@ export default function EditUser() {
   return (
     <div className="container py-4">
       <div className="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-4">
-        <h4 className="fw-semibold mb-3 mb-md-0">Add New User</h4>
-        <NavLink to="/users" className="btn btn-outline-primary btn-sm me-2">
-          <i className="fa-solid fa-list me-1"></i> Users
+        <h4 className="fw-semibold mb-3 mb-md-0">Edit {STAFF_TITLE}</h4>
+        <NavLink to="/staffs" className="btn btn-outline-primary btn-sm me-2">
+          <i className="fa-solid fa-list me-1"></i> {STAFF_TITLE}
         </NavLink>
       </div>
 
@@ -89,8 +111,8 @@ export default function EditUser() {
               {...register("mobile", {
                 required: "Mobile number is required.",
                 pattern: {
-                  value: /^[0-9]{10,15}$/,
-                  message: "Enter a valid mobile number (10–15 digits).",
+                  value: /^[0-9]{10,11}$/,
+                  message: "Enter a valid mobile number (10–11 digits).",
                 },
               })}
               className={`form-control ${errors.mobile ? "is-invalid" : ""}`}
@@ -112,9 +134,11 @@ export default function EditUser() {
                   message: "Invalid official email format.",
                 },
               })}
-              className="form-control"
-              placeholder="official@example.com"
+              className="form-control" placeholder="official@example.com"
             />
+            {errors.official_email && (
+              <div className="invalid-feedback">{errors.official_email.message}</div>
+            )}
           </div>
 
           {/* Official Mobile */}
@@ -124,14 +148,16 @@ export default function EditUser() {
               type="text"
               {...register("official_mobile", {
                 pattern: {
-                  value: /^[0-9]{10,15}$/,
+                  value: /^[0-9]{10,12}$/,
                   message:
-                    "Enter a valid official mobile number (10–15 digits).",
+                    "Enter a valid official mobile number (10–12 digits).",
                 },
               })}
-              className="form-control"
-              placeholder="Enter official mobile"
+              className="form-control" placeholder="Enter official mobile"
             />
+            {errors.official_mobile && (
+              <div className="invalid-feedback">{errors.official_mobile.message}</div>
+            )}
           </div>
 
           {/* Password */}
@@ -198,48 +224,41 @@ export default function EditUser() {
               <option value="Female">Female</option>
               <option value="Other">Other</option>
             </select>
-            
             {errors.gender && (
               <div className="invalid-feedback">{errors.gender.message}</div>
             )}
           </div>
 
-
           {/* Status */}
           <div className="col-md-6">
             <label className="form-label fw-medium">Status</label>
             <div>
-              <div className="form-check">
-                <input
-                  type="radio"
-                  value="Active"
-                  id="statusActive"
-                  className="form-check-input"
-                  {...register("status", {
-                    required: "Select a valid status.",
-                  })}
-                />
-                <label htmlFor="statusActive" className="form-check-label">
-                  Active
-                </label>
-              </div>
+              <input
+                type="radio"
+                value="Active"
+                id="status-Active"
+                className="form-check-input"
+                {...register("status", {
+                  required: "Select a valid status.",
+                })}
+              />
+              <label htmlFor="status-Active" className="form-check-label">
+                Active
+              </label>
 
-              <div className="form-check">
-                <input
-                  type="radio"
-                  value="Inactive"
-                  id="statusInactive"
-                  className="form-check-input"
-                  {...register("status", {
-                    required: "Select a valid status.",
-                  })}
-                />
-                <label htmlFor="statusInactive" className="form-check-label">
-                  Inactive
-                </label>
-              </div>
+              <input
+                type="radio"
+                value="Inactive"
+                id="status-Inactive"
+                className="form-check-input"
+                {...register("status", {
+                  required: "Select a valid status.",
+                })}
+              />
+              <label htmlFor="status-Inactive" className="form-check-label">
+                Inactive
+              </label>
             </div>
-
             {errors.status && (
               <div className="invalid-feedback d-block">
                 {errors.status.message}
@@ -271,7 +290,6 @@ export default function EditUser() {
                 </div>
               ))}
             </div>
-
             {errors.category && (
               <div className="invalid-feedback d-block">
                 {errors.category.message}

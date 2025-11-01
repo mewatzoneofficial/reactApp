@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { API_URL } from "../config";
 import { formatDMY } from "../utils/common";
 import CustomLoading from "../components/CustomLoading";
+import API_URL from "../utils/config";
 
 const RecentUser = () => {
   const [users, setUsers] = useState([]);

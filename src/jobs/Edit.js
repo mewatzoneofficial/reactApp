@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { NavLink, useParams, useNavigate } from "react-router-dom";
-import { API_URL } from "../config";
 import { showError, showSuccess } from "../utils/toast";
+import API_URL from "../utils/config";
 
 export default function EditUser() {
   const { id } = useParams();

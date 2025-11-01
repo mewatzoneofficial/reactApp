@@ -1,29 +1,46 @@
 import React, { useEffect, useState } from "react";
 import { Link, NavLink } from "react-router-dom";
 import Pagination from "../components/Pagination";
-import { API_URL } from "../config";
 import "react-toastify/dist/ReactToastify.css";
 import { confirmAction, showError, showSuccess } from "../utils/toast";
 import { formatDMY } from "../utils/common";
+import API_URL, { STAFF_TITLE } from "../utils/config";
 
-const Listing = () => {
-  const [results, setResults] = useState([]);
-  const [page, setPage] = useState(1);
-  const [limit] = useState(10);
-  const [totalPages, setTotalPages] = useState(1);
-  const [totalEntries, setTotalEntries] = useState(0);
-  const [loading, setLoading] = useState(false);
+interface Staff {
+  adminID: number;
+  name: string;
+  official_email: string;
+  mobile: string;
+  created_at: string;
+}
 
-  const [searchName, setSearchName] = useState("");
-  const [searchEmail, setSearchEmail] = useState("");
-  const [searchMobile, setSearchMobile] = useState("");
+interface FetchResponse {
+  data: {
+    results: Staff[];
+    page: number;
+    totalPages: number;
+    total: number;
+  };
+}
+
+const Listing: React.FC = () => {
+  const [results, setResults] = useState<Staff[]>([]);
+  const [page, setPage] = useState<number>(1);
+  const [limit] = useState<number>(10);
+  const [totalPages, setTotalPages] = useState<number>(1);
+  const [totalEntries, setTotalEntries] = useState<number>(0);
+  const [loading, setLoading] = useState<boolean>(false);
+
+  const [searchName, setSearchName] = useState<string>("");
+  const [searchEmail, setSearchEmail] = useState<string>("");
+  const [searchMobile, setSearchMobile] = useState<string>("");
 
   const fetchUsers = async (pageNumber = 1) => {
     setLoading(true);
     try {
       const queryParams = new URLSearchParams({
-        page: pageNumber,
-        limit,
+        page: pageNumber.toString(),
+        limit: limit.toString(),
       });
 
       if (searchName) queryParams.append("name", searchName);
@@ -31,7 +48,7 @@ const Listing = () => {
       if (searchMobile) queryParams.append("mobile", searchMobile);
 
       const res = await fetch(`${API_URL}staffs?${queryParams.toString()}`);
-      const data = await res.json();
+      const data: FetchResponse = await res.json();
 
       setResults(Array.isArray(data.data.results) ? data.data.results : []);
       setPage(data.data.page || 1);
@@ -49,27 +66,28 @@ const Listing = () => {
     fetchUsers(page);
   }, [page, limit]);
 
-  const handlePageChange = (newPage) => {
+  const handlePageChange = (newPage: number) => {
     if (newPage >= 1 && newPage <= totalPages) {
       setPage(newPage);
     }
   };
 
-  const handleDelete = async (id) => {
+  const handleDelete = async (id: number) => {
     const isConfirmed = await confirmAction({
       text: "You want to delete this?",
       confirmButtonText: "Yes, delete it!",
       cancelButtonText: "Cancel",
     });
     if (!isConfirmed) return;
+
     try {
       const res = await fetch(`${API_URL}staffs/${id}`, { method: "DELETE" });
       if (!res.ok) throw new Error("Failed to delete user");
 
       await showSuccess("User has been deleted successfully.");
       fetchUsers(page);
-    } catch (err) {
-      await showError("Error!", err.message || "Failed to delete user.");
+    } catch (err: any) {
+      await showError(err.message || "Failed to delete user.");
     }
   };
 
@@ -93,10 +111,10 @@ const Listing = () => {
   return (
     <div>
       <div className="d-flex justify-content-between align-items-center mb-3">
-        <h4 className="fw-semibold">Staffs</h4>
+        <h4 className="fw-semibold">{STAFF_TITLE}s</h4>
         <div>
           <NavLink to="/staffs/create" className="btn btn-primary btn-sm me-2">
-            <i className="fa-solid fa-plus"></i> Add New Staff
+            <i className="fa-solid fa-plus"></i> Add New {STAFF_TITLE}
           </NavLink>
         </div>
       </div>
@@ -180,7 +198,7 @@ const Listing = () => {
               <tbody>
                 {results.length === 0 ? (
                   <tr>
-                    <td colSpan="6" className="text-center">
+                    <td colSpan={6} className="text-center">
                       Record Not Found.
                     </td>
                   </tr>
@@ -217,8 +235,8 @@ const Listing = () => {
         {/* Pagination Info */}
         <div className="d-flex justify-content-between align-items-center mt-2">
           <small>
-            Showing {(page - 1) * limit + 1} to{" "}
-            {Math.min(page * limit, totalEntries)} of {totalEntries} entries
+            Showing {(page - 1) * limit + 1} to {Math.min(page * limit, totalEntries)} of{" "}
+            {totalEntries} entries
           </small>
           <nav>
             <ul className="pagination pagination-sm mb-0">

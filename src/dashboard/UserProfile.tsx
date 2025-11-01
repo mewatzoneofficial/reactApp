@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useForm, SubmitHandler } from "react-hook-form";
-import { API_URL } from "../config";
+import { showSuccess, showError } from "../utils/toast";
+import API_URL from "../utils/config";
 interface UserFormData {
   name: string;
   email: string;
   mobile: string;
   official_email?: string;
   official_mobile?: string;
-  password: string;
   dob: string;
   joining_date: string;
   gender: "Male" | "Female" | "Other";
@@ -23,7 +23,6 @@ const defaultUser: UserFormData = {
   mobile: "",
   official_email: "",
   official_mobile: "",
-  password: "",
   dob: new Date().toISOString().split("T")[0],
   joining_date: new Date().toISOString().split("T")[0],
   gender: "Male",
@@ -76,11 +75,11 @@ function UserProfile() {
       if (!res.ok) throw new Error(result.message || "Failed to save user");
 
       localStorage.setItem("adminUser", JSON.stringify(data));
-      alert("Profile updated successfully!");
-      navigate("/users");
+      showSuccess("Profile updated successfully");
+      navigate("/");
     } catch (err) {
       console.error("Error:", err);
-      alert("Failed to save user");
+      showError('Failed to save user')
     }
   };
 

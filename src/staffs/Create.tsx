@@ -1,8 +1,8 @@
 import React from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { NavLink, useNavigate } from "react-router-dom";
-import { API_URL } from "../config";
 import { showError, showSuccess } from "../utils/toast";
+import API_URL, { STAFF_TITLE} from "../utils/config";
 
 interface UserFormData {
   name: string;
@@ -40,7 +40,7 @@ export default function AddUser() {
 
   const onSubmit: SubmitHandler<UserFormData> = async (formData) => {
     try {
-      const res = await fetch(`${API_URL}users`, {
+      const res = await fetch(`${API_URL}staffs`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
@@ -48,22 +48,22 @@ export default function AddUser() {
 
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || "Failed to create user");
+      console.log('data', data);
 
-      showSuccess("User created successfully");
-      navigate("/users");
+      showSuccess(data.massage);
+      // navigate("/staffs");
       reset();
-    } catch (err) {
-      console.error("❌ Error:", err);
-      showError("Failed to create user.");
+    } catch (err: any) {
+      await showError(err.message || "Failed to create user.");
     }
   };
 
   return (
     <div className="container py-4">
       <div className="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-4">
-        <h4 className="fw-semibold mb-3 mb-md-0">Add New User</h4>
-        <NavLink to="/users" className="btn btn-outline-primary btn-sm me-2">
-          <i className="fa-solid fa-list me-1"></i> Users
+        <h4 className="fw-semibold mb-3 mb-md-0">Add {STAFF_TITLE}</h4>
+        <NavLink to="/staffs" className="btn btn-outline-primary btn-sm me-2">
+          <i className="fa-solid fa-list me-1"></i> {STAFF_TITLE}
         </NavLink>
       </div>
 
@@ -134,9 +134,11 @@ export default function AddUser() {
                   message: "Invalid official email format.",
                 },
               })}
-              className="form-control"
-              placeholder="official@example.com"
+              className="form-control" placeholder="official@example.com"
             />
+            {errors.official_email && (
+              <div className="invalid-feedback">{errors.official_email.message}</div>
+            )}
           </div>
 
           {/* Official Mobile */}
@@ -151,9 +153,11 @@ export default function AddUser() {
                     "Enter a valid official mobile number (10–12 digits).",
                 },
               })}
-              className="form-control"
-              placeholder="Enter official mobile"
+              className="form-control" placeholder="Enter official mobile"
             />
+            {errors.official_mobile && (
+              <div className="invalid-feedback">{errors.official_mobile.message}</div>
+            )}
           </div>
 
           {/* Password */}

@@ -1,58 +1,47 @@
 import React, { useEffect, useState } from "react";
 import { Link, NavLink } from "react-router-dom";
-import Pagination from "../components/Pagination";
-import { API_URL } from "../config";
-import "react-toastify/dist/ReactToastify.css";
-import { showError, showSuccess } from "../utils/toast";
+import { useDispatch, useSelector } from "react-redux";
 import Swal from "sweetalert2";
+import { fetchUsers, deleteUser } from "../redux/usersSlice";
+import { showError, showSuccess } from "../utils/toast";
 import { formatDMY } from "../utils/common";
+import Pagination from "../components/Pagination";
 import CustomLoading from "../components/CustomLoading";
 
 const Listing = () => {
-  const [users, setUsers] = useState([]);
-  const [page, setPage] = useState(1);
-  const [limit] = useState(10);
-  const [totalPages, setTotalPages] = useState(1);
-  const [totalEntries, setTotalEntries] = useState(0);
-  const [loading, setLoading] = useState(false);
+  const dispatch = useDispatch();
+
+  const {
+    users,
+    page,
+    limit,
+    totalPages,
+    totalEntries,
+    loading,
+    error,
+  } = useSelector((state) => state.users);
 
   const [searchName, setSearchName] = useState("");
   const [searchEmail, setSearchEmail] = useState("");
 
-  const fetchUsers = async (pageNumber = 1) => {
-    setLoading(true);
-    try {
-      const queryParams = new URLSearchParams({
-        page: pageNumber,
-        limit,
-      });
-
-      if (searchName) queryParams.append("name", searchName);
-      if (searchEmail) queryParams.append("email", searchEmail);
-
-      const res = await fetch(`${API_URL}users?${queryParams.toString()}`);
-      const data = await res.json();
-
-      setUsers(Array.isArray(data.data.results) ? data.data.results : []);
-      setPage(data.data.page || 1);
-      setTotalPages(data.data.totalPages || 1);
-      setTotalEntries(data.data.total || 0);
-    } catch (err) {
-      console.error("Error loading users:", err);
-      setUsers([]);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
-    fetchUsers(page);
-  }, [page, limit]);
+    dispatch(fetchUsers({ page, limit }));
+  }, [dispatch, page, limit]);
 
   const handlePageChange = (newPage) => {
     if (newPage >= 1 && newPage <= totalPages) {
-      setPage(newPage);
+      dispatch(fetchUsers({ page: newPage, limit, name: searchName, email: searchEmail }));
     }
+  };
+
+  const handleSearch = () => {
+    dispatch(fetchUsers({ page: 1, limit, name: searchName, email: searchEmail }));
+  };
+
+  const handleReset = () => {
+    setSearchName("");
+    setSearchEmail("");
+    dispatch(fetchUsers({ page: 1, limit }));
   };
 
   const handleDelete = async (id) => {
@@ -70,67 +59,46 @@ const Listing = () => {
 
     if (result.isConfirmed) {
       try {
-        const res = await fetch(`${API_URL}users/${id}`, { method: "DELETE" });
-        if (!res.ok) throw new Error("Failed to delete user");
-
-        await showSuccess("User has been deleted successfully.");
-        fetchUsers(page);
+        await dispatch(deleteUser(id)).unwrap();
+        showSuccess("User deleted successfully.");
       } catch (err) {
-        await showError("Error!", err.message || "Failed to delete user.");
+        showError("Error!", err || "Failed to delete user.");
       }
     }
-  };
-
-  const handleSearch = () => {
-    setPage(1);
-    fetchUsers(1);
-  };
-
-  const handleReset = () => {
-    setSearchName("");
-    setSearchEmail("");
-    setPage(1);
-    fetchUsers(1);
   };
 
   return (
     <div>
       <div className="d-flex justify-content-between align-items-center mb-3">
         <h4 className="fw-semibold">Users</h4>
-        <div>
-          <NavLink to="/users/create" className="btn btn-primary btn-sm me-2">
-            <i className="fa-solid fa-plus"></i> Add New User
-          </NavLink>
-        </div>
+        <NavLink to="/users/create" className="btn btn-primary btn-sm me-2">
+          <i className="fa-solid fa-plus"></i> Add New User
+        </NavLink>
       </div>
 
       <div className="card p-3">
-        {/* 🔍 Search Fields */}
+        {/* 🔍 Search Section */}
         <div className="row m-3">
           <div className="col-md-4">
             <label className="form-label fw-medium">Name</label>
             <input
               type="text"
-              name="name"
               value={searchName}
               onChange={(e) => setSearchName(e.target.value)}
               className="form-control"
               placeholder="Search Name"
             />
           </div>
-
           <div className="col-md-4">
             <label className="form-label fw-medium">Email</label>
             <input
               type="text"
-              name="email"
               value={searchEmail}
               onChange={(e) => setSearchEmail(e.target.value)}
               className="form-control"
               placeholder="Search Email"
             />
           </div>
-
           <div className="col-md-4 d-flex align-items-end gap-2">
             <button
               onClick={handleSearch}
@@ -149,9 +117,10 @@ const Listing = () => {
           </div>
         </div>
 
-        {/* 📋 Table */}
         {loading ? (
-          <CustomLoading/>
+          <CustomLoading />
+        ) : error ? (
+          <div className="text-danger text-center p-3">{error}</div>
         ) : (
           <div className="table-responsive">
             <table className="table table-bordered table-hover align-middle">
@@ -160,8 +129,8 @@ const Listing = () => {
                   <th>ID</th>
                   <th>Name</th>
                   <th>Email</th>
-                  <th>Mobile No.</th>
-                  <th>Create Date</th>
+                  <th>Mobile</th>
+                  <th>Created</th>
                   <th>Actions</th>
                 </tr>
               </thead>
@@ -180,7 +149,7 @@ const Listing = () => {
                       <td>{user.email}</td>
                       <td>{user.mobile}</td>
                       <td>{formatDMY(user.created_at)}</td>
-                      <td className="text-right">
+                      <td>
                         <Link
                           to={`/users/edit/${user.faculityID}`}
                           className="text-warning me-3"
@@ -208,15 +177,11 @@ const Listing = () => {
             Showing {(page - 1) * limit + 1} to{" "}
             {Math.min(page * limit, totalEntries)} of {totalEntries} entries
           </small>
-          <nav>
-            <ul className="pagination pagination-sm mb-0">
-              <Pagination
-                currentPage={page}
-                totalPages={totalPages}
-                onPageChange={handlePageChange}
-              />
-            </ul>
-          </nav>
+          <Pagination
+            currentPage={page}
+            totalPages={totalPages}
+            onPageChange={handlePageChange}
+          />
         </div>
       </div>
     </div>

@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { Link, NavLink } from "react-router-dom";
 import Pagination from "../components/Pagination";
-import { API_URL } from "../config";
 import "react-toastify/dist/ReactToastify.css";
 import { showError, showSuccess } from "../utils/toast";
 import Swal from "sweetalert2";
+import API_URL from "../utils/config";
 
 const Listing = () => {
   const [users, setUsers] = useState([]);

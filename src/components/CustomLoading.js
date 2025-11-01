@@ -1,42 +1,42 @@
-import React from 'react';
+import React from "react";
 
 function CustomLoading({
-  message = 'Loading...',
-  size = 60,
+  message = "Loading...",
+  size = 90,
   overlayOpacity = 0.8,
-  colors = ['#28a745', '#007bff', '#ffc107', '#dc3545'],
+  colors = ["#28a745", "#007bff", "#ffc107", "#dc3545"],
 }) {
   const overlayStyle = {
-    position: 'fixed',
+    position: "fixed",
     top: 0,
     left: 0,
-    width: '100%',
-    height: '100%',
+    width: "100%",
+    height: "100%",
     background: `rgba(255, 255, 255, ${overlayOpacity})`,
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    flexDirection: 'column',
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    flexDirection: "column",
     zIndex: 9999,
-    animation: 'fadeIn 0.5s ease-in-out',
+    animation: "fadeIn 0.5s ease-in-out",
   };
 
   const spinnerStyle = {
     width: `${size}px`,
     height: `${size}px`,
-    border: `${size / 8}px solid #f3f3f3`,
-    borderTop: `${size / 8}px solid ${colors[0]}`,
-    borderRadius: '50%',
-    animation: 'spin 1s linear infinite, colorCycle 2s linear infinite',
-    boxShadow: '0 0 10px rgba(0,0,0,0.1)',
+    border: `${size / 10}px solid #f3f3f3`,
+    borderTop: `${size / 10}px solid ${colors[0]}`,
+    borderRadius: "50%",
+    animation: "spin 1s linear infinite, colorCycle 2s linear infinite",
+    boxShadow: "0 0 10px rgba(0,0,0,0.1)",
   };
 
   const textStyle = {
-    marginTop: '12px',
-    fontSize: '1rem',
-    fontWeight: '500',
-    color: '#333',
-    animation: 'pulse 1.5s ease-in-out infinite',
+    marginTop: "12px",
+    fontSize: "1rem",
+    fontWeight: "500",
+    color: "#333",
+    animation: "pulse 1.5s ease-in-out infinite",
   };
 
   // Generate keyframes dynamically

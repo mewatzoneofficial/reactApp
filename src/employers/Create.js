@@ -1,8 +1,8 @@
 import React from "react";
 import { useForm } from "react-hook-form";
 import { NavLink, useNavigate } from "react-router-dom";
-import { API_URL } from "../config";
 import { showError, showSuccess } from "../utils/toast";
+import API_URL from "../utils/config";
 
 export default function AddUser() {
   const navigate = useNavigate();

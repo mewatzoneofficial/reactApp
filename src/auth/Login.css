@@ -78,7 +78,24 @@
 /* Button */
 .login-btn {
   width: 100%;
-  padding: 14px;
+  padding: 10px;
+  margin: 5px;
+  border-radius: 10px;
+  border: none;
+  background: #ffb347; /* Button gradient */
+  background: linear-gradient(to right, #ffcc33, #ff6b6b);
+  color: #fff;
+  font-weight: 600;
+  font-size: 16px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+/* Button */
+.register-btn {
+  width: 100%;
+  padding: 10px;
+  margin: 5px;
   border-radius: 10px;
   border: none;
   background: #ffb347; /* Button gradient */

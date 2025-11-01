@@ -48,12 +48,12 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
         {/* Page numbers */}
         {pageNumbers.map((number, index) =>
           number === "..." ? (
-            <li key={index} className="page-item disabled">
+            <li key={`ellipsis-${index}`} className="page-item disabled">
               <span className="page-link">…</span>
             </li>
           ) : (
             <li
-              key={number}
+              key={`page-${number}-${index}`}
               className={`page-item ${currentPage === number ? "active" : ""}`}
             >
               <button

@@ -1,4 +1,4 @@
-import RecentUser from "../components/RecentUser";
+import RecentUser from "./RecentUser";
 import StatCard from "../components/StatCard";
 import UserChart from "./UserChart";
 import JobPieChart from "./JobPieChart";

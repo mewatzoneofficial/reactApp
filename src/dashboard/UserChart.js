@@ -9,7 +9,7 @@ import {
   YAxis,
   Legend,
 } from "recharts";
-import { API_URL } from "../config";
+import API_URL from "../utils/config";
 
 const Employer_Job_Chart = () => {
   const [filter, setFilter] = useState("month");

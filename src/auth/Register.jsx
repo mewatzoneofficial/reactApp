@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import "./Login.css";
-import { API_URL } from "./config";
-import { showError, showSuccess } from "./utils/toast";
+import { showError, showSuccess } from "../utils/toast";
 import { useNavigate } from "react-router-dom";
+import API_URL from "../utils/config";
 
-const Login = () => {
+const Register = () => {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -33,6 +33,11 @@ const Login = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleLogin = (e) => {
+    e.preventDefault(); // if inside a form
+    navigate("/login"); // redirect to /register
   };
 
   return (
@@ -73,13 +78,16 @@ const Login = () => {
             {errors.password && <span className="password_error">{errors.password.message}</span>}
           </div>
 
-          <button type="submit" className="login-btn" disabled={loading}>
-            {loading ? "Logging in..." : "Login"}
+          <button type="submit" className="register-btn" disabled={loading}>
+            {loading ? "Logging in..." : "Register"}
           </button>
+
+          <button type="submit" className="login-btn" onClick={handleLogin}>Login</button>
+
         </form>
       </div>
     </div>
   );
 };
 
-export default Login;
+export default Register;

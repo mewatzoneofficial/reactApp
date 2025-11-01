@@ -6,9 +6,9 @@ import UserList from "./users/Listing";
 import UserCreate from "./users/Create";
 import UserEdit from "./users/Edit";
 
-import StaffList from "./staffs/Listing";
+import StaffList from "./staffs/Listing.tsx";
 import StaffCreate from "./staffs/Create.tsx";
-import StaffEdit from "./staffs/Edit";
+import StaffEdit from "./staffs/Edit.tsx";
 
 import EmployerList from "./employers/Listing";
 import EmployerCreate from "./employers/Create";
@@ -20,23 +20,24 @@ import JobEdit from "./jobs/Edit";
 
 import Setting from "./components/Setting";
 import AuthAdmin from "./middleware/AuthAdmin";
-import Login from "./Login";
 import Order from "./components/Order";
 import NotFound from "./components/NotFound";
-import Chat from "./Chat.js";
 import Dashboard from "./dashboard/Dashboard.js";
 import UserProfile from "./dashboard/UserProfile.tsx";
+import ChatBox from "./auth/Chat.js";
+import Register from "./auth/Register.jsx";
+import Login from "./auth/Login.jsx";
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* <Route path="/" element={<AdminLayout />}> */}
-          <Route path="/" element={
+        <Route path="/" element={
               <AuthAdmin>
                 <AdminLayout />
               </AuthAdmin>
-            } >
+            }
+          >
           <Route index element={<Navigate to="/dashboard" />} />
           <Route path="profile" element={<UserProfile />} />
           <Route path="dashboard" element={<Dashboard />} />
@@ -65,11 +66,12 @@ function App() {
             <Route path="edit/:id" element={<JobEdit />} />
           </Route>
 
-          <Route path="chats" element={<Chat />} />
+          <Route path="chats" element={<ChatBox />} />
           <Route path="settings" element={<Setting />} />
           <Route path="orders" element={<Order />} />
         </Route>
         <Route path="login" element={<Login />} />
+        <Route path="register" element={<Register />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>
