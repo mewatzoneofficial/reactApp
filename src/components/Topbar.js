@@ -5,7 +5,6 @@ function Topbar() {
   const navigate = useNavigate();
 
   const authuserdata = JSON.parse(localStorage.getItem("adminUser") || "{}");
-  const authusertoken = localStorage.getItem("adminToken");
 
   const handleLogout = () => {
     localStorage.removeItem("adminToken");

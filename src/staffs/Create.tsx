@@ -51,7 +51,7 @@ export default function AddUser() {
       console.log('data', data);
 
       showSuccess(data.massage);
-      // navigate("/staffs");
+      navigate("/staffs");
       reset();
     } catch (err: any) {
       await showError(err.message || "Failed to create user.");
