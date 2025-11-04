@@ -31,7 +31,7 @@ export default function ChatBox({ enyId, name, avatar }) {
   useEffect(() => {
     if (!currentUser) return;
 
-    const socket = new WebSocket("ws://localhost:5555/user");
+    const socket = new WebSocket("wss://empapi.fpsjob.com/ws/user");
     setWs(socket);
 
     socket.onopen = () => {
@@ -40,7 +40,7 @@ export default function ChatBox({ enyId, name, avatar }) {
       socket.send(
         JSON.stringify({
           type: "register",
-          loginId: currentUser.faculityID,
+          loginId: "78003a17db1ac2da8c73ec293b7f8edfb1b6724831",
           page: 1,
           limit: 50,
         })
@@ -265,8 +265,9 @@ export default function ChatBox({ enyId, name, avatar }) {
           <i className="fa fa-comments"></i> Chat
         </div>
         <div className="actions pull-right">
+          
           <button className="btn btn-sm btn-icon" title="Unread Messages">
-            {unreadTotal}
+            <span className="badge">{unreadTotal}</span>
           </button>
         </div>
       </div>
@@ -295,7 +296,7 @@ export default function ChatBox({ enyId, name, avatar }) {
                   }`}
                   onClick={() => openChat(u.faculityID)}
                 >
-                  <img src={u.avatar} alt={u.name} />
+                  <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" alt={u.name} />
                   <span className={`status-dot ${u.online ? "online" : "offline"}`}></span>
                   <div className="name">
                     {u.name}
